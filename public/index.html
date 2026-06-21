@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Free Image Tools</title>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Segoe UI',sans-serif;
+}
+
+body{
+background:#f4f7fb;
+min-height:100vh;
+}
+
+header{
+background:linear-gradient(135deg,#2563eb,#4f46e5);
+color:white;
+padding:40px 20px;
+text-align:center;
+box-shadow:0 4px 15px rgba(0,0,0,.2);
+}
+
+header h1{
+font-size:42px;
+margin-bottom:10px;
+}
+
+header p{
+font-size:18px;
+opacity:.9;
+}
+
+.section-title{
+text-align:center;
+margin:40px 0 25px;
+color:#1f2937;
+font-size:28px;
+}
+
+.container{
+max-width:1200px;
+margin:auto;
+padding:20px;
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+gap:25px;
+}
+
+.card{
+padding:20px;
+min-height:auto;
+border-radius:18px;
+box-shadow:0 10px 25px rgba(0,0,0,.08);
+transition:.3s;
+}
+
+.card:hover{
+transform:translateY(-6px);
+box-shadow:0 15px 35px rgba(0,0,0,.15);
+}
+
+.card h2{
+font-size:22px;
+margin-bottom:15px;
+color:#2563eb;
+}
+
+input[type="file"]{
+width:100%;
+padding:12px;
+border:2px dashed #d1d5db;
+border-radius:10px;
+background:#fafafa;
+margin-bottom:15px;
+}
+
+input[type="number"]{
+width:120px;
+padding:10px;
+margin-right:10px;
+margin-bottom:15px;
+border:1px solid #d1d5db;
+border-radius:8px;
+}
+
+button{
+background:linear-gradient(
+135deg,
+#2563eb,
+#4f46e5
+);
+color:white;
+border:none;
+padding:12px 20px;
+border-radius:10px;
+cursor:pointer;
+font-weight:600;
+transition:.3s;
+}
+color:white;
+border:none;
+padding:10px 18px;
+border-radius:8px;
+cursor:pointer;
+font-weight:600;
+transition:.3s;
+}
+
+button:hover{
+background:#1d4ed8;
+}
+
+.tool-desc{
+font-size:14px;
+color:#6b7280;
+margin-bottom:15px;
+}
+
+#preview{
+max-width:100%;
+display:none;
+border-radius:10px;
+margin-top:15px;
+}
+
+.stats{
+display:flex;
+justify-content:center;
+gap:30px;
+margin:30px 0;
+flex-wrap:wrap;
+}
+
+.stat-box{
+background:white;
+padding:15px 25px;
+border-radius:12px;
+box-shadow:0 5px 15px rgba(0,0,0,.08);
+text-align:center;
+}
+
+.stat-box h3{
+color:#2563eb;
+font-size:24px;
+}
+
+footer{
+margin-top:50px;
+padding:20px;
+text-align:center;
+background:#111827;
+color:white;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+<h1>🛠️ ToolBox Pro</h1>
+<p>Free Image & PDF Utilities</p>
+</header>
+
+<div class="stats">
+
+<div class="stat-box">
+<h3>6+</h3>
+<p>Tools</p>
+</div>
+
+<div class="stat-box">
+<h3>100%</h3>
+<p>Free</p>
+</div>
+
+<div class="stat-box">
+<h3>Local</h3>
+<p>Processing</p>
+</div>
+
+</div>
+
+<h2 class="section-title">
+Image & PDF Tools
+</h2>
+
+<div style="
+max-width:500px;
+margin:20px auto 40px;
+">
+
+<input
+type="text"
+id="toolSearch"
+placeholder="Search tools..."
+onkeyup="searchTools()"
+style="
+width:100%;
+padding:15px;
+border-radius:12px;
+border:1px solid #ddd;
+font-size:16px;
+">
+
+</div>
+
+<div class="container">
+
+<div class="card tool-card">
+<h2>📏 Resize Image</h2>
+<p class="tool-desc">
+Change image dimensions quickly
+</p>
+
+<input type="file" id="resizeFile">
+
+<br>
+
+<input type="number" id="width" placeholder="Width">
+
+<input type="number" id="height" placeholder="Height">
+
+<br>
+
+<button onclick="resizeImage()">
+Resize Image
+</button>
+</div>
+
+<div class="card tool-card">
+<h2>⚡ Compress Image</h2>
+<p class="tool-desc">
+Reduce image size while keeping quality
+</p>
+
+<input type="file" id="compressFile">
+
+<br>
+
+<button onclick="compressImage()">
+Compress Image
+</button>
+</div>
+
+<div class="card tool-card">
+<h2>🔄 JPG ↔ PNG Converter</h2>
+<p class="tool-desc">
+Convert between JPG and PNG formats
+</p>
+
+<input type="file" id="convertFile">
+
+<br>
+
+<button onclick="convertToPNG()">
+JPG to PNG
+</button>
+
+<button onclick="convertToJPG()">
+PNG to JPG
+</button>
+</div>
+
+<div class="card tool-card">
+
+<h2>✂️ Crop Image</h2>
+<p class="tool-desc">
+Crop images to any custom area
+</p>
+
+<input type="file" id="cropFile">
+
+<br><br>
+
+<img id="preview">
+
+<br><br>
+
+<button onclick="cropImage()">
+Crop & Download
+</button>
+
+</div>
+
+<div class="card tool-card">
+
+<h2>📄 Image to PDF</h2>
+<p class="tool-desc">
+Convert images into PDF documents
+</p>
+
+<input type="file" id="pdfFile">
+
+<br><br>
+
+<button onclick="imageToPDF()">
+Convert to PDF
+</button>
+
+</div>
+
+<div class="card tool-card">
+
+<h2>📚 Merge PDFs</h2>
+<p class="tool-desc">
+Combine multiple PDF files into one
+</p>
+
+<input
+type="file"
+id="mergePdfFiles"
+multiple
+accept=".pdf">
+
+<br><br>
+
+<button onclick="mergePDFs()">
+Merge PDFs
+</button>
+
+</div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.js"></script>
+
+<script>
+
+let cropper;
+
+document
+.getElementById('cropFile')
+.addEventListener('change', function(e){
+
+const file = e.target.files[0];
+
+if(!file) return;
+
+const reader = new FileReader();
+
+reader.onload = function(){
+
+const image =
+document.getElementById('preview');
+
+image.src = reader.result;
+
+image.style.display = 'block';
+
+if(cropper){
+cropper.destroy();
+}
+
+cropper = new Cropper(image,{
+viewMode:1
+});
+
+};
+
+reader.readAsDataURL(file);
+
+});
+
+async function resizeImage(){
+
+const file =
+document.getElementById('resizeFile').files[0];
+
+const width =
+document.getElementById('width').value;
+
+const height =
+document.getElementById('height').value;
+
+if(!file){
+alert('Select image');
+return;
+}
+
+const formData = new FormData();
+
+formData.append('image',file);
+formData.append('width',width);
+formData.append('height',height);
+
+const response =
+await fetch('/image/resize',{
+method:'POST',
+body:formData
+});
+
+const blob =
+await response.blob();
+
+const url =
+URL.createObjectURL(blob);
+
+const a =
+document.createElement('a');
+
+a.href=url;
+a.download='resized.jpg';
+
+a.click();
+
+}
+
+async function compressImage(){
+
+const file =
+document.getElementById('compressFile').files[0];
+
+if(!file){
+alert('Select image');
+return;
+}
+
+const formData = new FormData();
+
+formData.append('image',file);
+
+const response =
+await fetch('/compress',{
+method:'POST',
+body:formData
+});
+
+const blob =
+await response.blob();
+
+const url =
+URL.createObjectURL(blob);
+
+const a =
+document.createElement('a');
+
+a.href=url;
+a.download='compressed.jpg';
+
+a.click();
+
+}
+
+async function convertToPNG(){
+
+const file =
+document.getElementById('convertFile').files[0];
+
+if(!file){
+alert('Select image');
+return;
+}
+
+const formData = new FormData();
+
+formData.append('image',file);
+
+const response =
+await fetch('/convert/png',{
+method:'POST',
+body:formData
+});
+
+const blob =
+await response.blob();
+
+const url =
+URL.createObjectURL(blob);
+
+const a =
+document.createElement('a');
+
+a.href=url;
+a.download='converted.png';
+
+a.click();
+
+}
+
+async function convertToJPG(){
+
+const file =
+document.getElementById('convertFile').files[0];
+
+if(!file){
+alert('Select image');
+return;
+}
+
+const formData = new FormData();
+
+formData.append('image',file);
+
+const response =
+await fetch('/convert/jpg',{
+method:'POST',
+body:formData
+});
+
+const blob =
+await response.blob();
+
+const url =
+URL.createObjectURL(blob);
+
+const a =
+document.createElement('a');
+
+a.href=url;
+a.download='converted.jpg';
+
+a.click();
+
+}
+
+async function cropImage(){
+
+if(!cropper){
+alert('Select image first');
+return;
+}
+
+const data =
+cropper.getData(true);
+
+const file =
+document.getElementById('cropFile').files[0];
+
+const formData =
+new FormData();
+
+formData.append('image',file);
+
+formData.append('x',Math.round(data.x));
+formData.append('y',Math.round(data.y));
+formData.append('width',Math.round(data.width));
+formData.append('height',Math.round(data.height));
+
+const response =
+await fetch('/crop',{
+method:'POST',
+body:formData
+});
+
+const blob =
+await response.blob();
+
+const url =
+URL.createObjectURL(blob);
+
+const a =
+document.createElement('a');
+
+a.href=url;
+a.download='cropped.jpg';
+
+a.click();
+
+}
+
+async function imageToPDF(){
+
+const file =
+document.getElementById('pdfFile').files[0];
+
+if(!file){
+alert('Select image');
+return;
+}
+
+const formData =
+new FormData();
+
+formData.append('image',file);
+
+const response =
+await fetch('/imagepdf',{
+method:'POST',
+body:formData
+});
+
+const blob =
+await response.blob();
+
+const url =
+URL.createObjectURL(blob);
+
+const a =
+document.createElement('a');
+
+a.href=url;
+a.download='image.pdf';
+
+a.click();
+
+}
+
+async function mergePDFs(){
+
+const files =
+document.getElementById(
+'mergePdfFiles'
+).files;
+
+if(files.length < 2){
+
+alert(
+'Select at least 2 PDFs'
+);
+
+return;
+}
+
+const formData =
+new FormData();
+
+for(let i=0;i<files.length;i++){
+
+formData.append(
+'pdfs',
+files[i]
+);
+
+}
+
+const response =
+await fetch('/mergepdf',{
+
+method:'POST',
+body:formData
+
+});
+
+const blob =
+await response.blob();
+
+const url =
+URL.createObjectURL(blob);
+
+const a =
+document.createElement('a');
+
+a.href=url;
+
+a.download='merged.pdf';
+
+a.click();
+
+}
+
+function searchTools(){
+
+const input =
+document.getElementById('toolSearch');
+
+const filter =
+input.value.toLowerCase();
+
+const cards =
+document.querySelectorAll('.tool-card');
+
+cards.forEach(card => {
+
+const text =
+card.innerText.toLowerCase();
+
+if(text.includes(filter)){
+card.style.display = '';
+}else{
+card.style.display = 'none';
+}
+
+});
+
+}
+
+</script>
+
+</body>
+</html>
