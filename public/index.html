@@ -263,6 +263,31 @@ Compress Image
 </div>
 
 <div class="card tool-card">
+
+<h2>📏 Resize Image to KB</h2>
+
+<p class="tool-desc">
+Reduce image to exact file size
+</p>
+
+<input type="file" id="kbFile">
+
+<br><br>
+
+<input
+type="number"
+id="targetKB"
+placeholder="Target KB">
+
+<br>
+
+<button onclick="resizeToKB()">
+Resize to KB
+</button>
+
+</div>
+
+<div class="card tool-card">
 <h2>🔄 JPG ↔ PNG Converter</h2>
 <p class="tool-desc">
 Convert between JPG and PNG formats
@@ -663,6 +688,47 @@ document.createElement('a');
 a.href=url;
 
 a.download='merged.pdf';
+
+a.click();
+
+}
+
+async function resizeToKB(){
+
+const file =
+document.getElementById('kbFile').files[0];
+
+const targetKB =
+document.getElementById('targetKB').value;
+
+if(!file){
+alert('Select image');
+return;
+}
+
+const formData =
+new FormData();
+
+formData.append('image',file);
+formData.append('targetKB',targetKB);
+
+const response =
+await fetch('/resize-kb',{
+method:'POST',
+body:formData
+});
+
+const blob =
+await response.blob();
+
+const url =
+URL.createObjectURL(blob);
+
+const a =
+document.createElement('a');
+
+a.href=url;
+a.download='resized-kb.jpg';
 
 a.click();
 
