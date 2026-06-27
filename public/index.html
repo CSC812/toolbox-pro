@@ -365,6 +365,33 @@ Merge PDFs
 
 </div>
 
+<div class="card tool-card">
+
+<h2>📄 Split PDF</h2>
+
+<p class="tool-desc">
+Extract a page from PDF
+</p>
+
+<input
+type="file"
+id="splitPdfFile">
+
+<br><br>
+
+<input
+type="number"
+id="splitPage"
+placeholder="Page Number">
+
+<br>
+
+<button onclick="splitPDF()">
+Split PDF
+</button>
+
+</div>
+
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.js"></script>
@@ -729,6 +756,51 @@ document.createElement('a');
 
 a.href=url;
 a.download='resized-kb.jpg';
+
+a.click();
+
+}
+
+async function splitPDF(){
+
+const file =
+document
+.getElementById('splitPdfFile')
+.files[0];
+
+const page =
+document
+.getElementById('splitPage')
+.value;
+
+if(!file){
+alert('Select PDF');
+return;
+}
+
+const formData =
+new FormData();
+
+formData.append('pdf', file);
+formData.append('page', page);
+
+const response =
+await fetch('/splitpdf', {
+method:'POST',
+body:formData
+});
+
+const blob =
+await response.blob();
+
+const url =
+URL.createObjectURL(blob);
+
+const a =
+document.createElement('a');
+
+a.href = url;
+a.download = 'split.pdf';
 
 a.click();
 
